@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="description"	content="Data Visualisation Exercise 1"/>
+	<meta name="keywords"		  content="HTML, CSS"/>
+	<meta name="author"			  content="Dai Vy"/>
+
+	<title>Task 1.1 HTML and CSS Demo Page</title>
+	<!--Insert description of exercise  -->
+
+	<style>
+	body {
+		font-family: Arial, sans-serif;
+		background: #f8f9fa;
+		margin: 0;
+		padding: 0 20px;
+	}
+
+	h1, h2 {
+		color: #2c3e50;
+	}
+
+	figure {
+		background: #fff;
+		border: 1px solid #ddd;
+		padding: 12px;
+		margin: 24px 0;
+		border-radius: 8px;
+		text-align: center;
+	}
+
+	figcaption {
+		font-size: 0.95em;
+		color: #555;
+		margin-top: 8px;
+	}
+
+	img {
+		border-radius: 6px;
+		margin: 0 8px;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+	}
+
+	.chart-buttons {
+		margin-top: 12px;
+		text-align: center;
+	}
+
+	.chart-buttons button {
+		background: #3498db;
+		color: #fff;
+		border: none;
+		padding: 10px 18px;
+		margin: 0 6px;
+		border-radius: 5px;
+		font-size: 1em;
+		cursor: pointer;
+		transition: background 0.2s;
+	}
+
+	.chart-buttons button:hover {
+		background: #217dbb;
+	}
+	</style>
+
+   
+</head>
+
+	<script>
+		const charts = [
+			{
+				src: "Pets_2019.png",
+				alt: "Pet ownership in 2019",
+				caption: "Fig 1: Pet ownership in 2019"
+			},
+			{
+				src: "Pets_2021.png",
+				alt: "Pet ownership in 2021",
+				caption: "Fig 2: Pet ownership in 2021"
+			},
+			{
+				src: "Both.png",
+				alt: "Comparison of pet ownership in 2019 and 2021",
+				caption: "Fig 3: Comparison of pet ownership in 2019 and 2021"
+			}
+		];
+
+		function showChart(index) {
+			const img = document.getElementById('chart-img');
+			const caption = document.getElementById('chart-caption');
+			img.src = charts[index].src;
+			img.alt = charts[index].alt;
+			caption.textContent = charts[index].caption;
+		}
+	</script>
+<body>
+	<h1>LAB 1.2 JavaScript</h1>
+	<h2>Pet Comparison 2019 vs 2021</h2>
+
+	<div>
+		<p>
+			A report from Animal Medicines Australia (AMA) has found that many Australians took the opportunity to introduce a pet into their household during the pandemic. Their survey indicated that there was a significant increase in the percent of households taking in a new dog, fish or bird. Their research also indicated that pets had a number of positive influences on their lives such as:
+		</p>
+		<ul>
+			<li>Companionship</li>
+			<li>Better mental health</li>
+			<li>Joy and happiness</li>
+		</ul>
+		<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatum fugit eos minus, hic ipsum animi reprehenderit sapiente, id odio, dicta nihil dolor et magnam? Totam temporibus consequuntur nemo odit beatae.</p>
+	</div>
+
+	<p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatum fugit eos minus, hic ipsum animi reprehenderit sapiente, id odio, dicta nihil dolor et magnam? Totam temporibus consequuntur nemo odit beatae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat odio eum, nulla delectus a dolorem iure perferendis veniam id pariatur animi alias laudantium labore, aliquid aspernatur impedit dolor odit. Quae.
+	</p>
+
+	<div id="chart-section">
+		<figure>
+			<img id="chart-img" style="max-width:100%;height:auto;">
+			<figcaption id="chart-caption"></figcaption>
+		</figure>
+		<div class="chart-buttons">
+			<p>Search data for each year here:</p>
+			<button onclick="showChart(0)">2019</button>
+			<button onclick="showChart(1)">2021</button>
+			<button onclick="showChart(2)">Both</button>
+		</div>
+	</div>
+
+	<footer>
+		COS30045 Data Visualisation <br>
+		Semester 2025 <br>
+		Dai Vy
+	</footer>
+</body>
+</html>
