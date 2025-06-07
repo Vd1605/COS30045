@@ -1,0 +1,51 @@
+# OECD Patent Data Dashboard - User Instructions
+
+This document provides step-by-step instructions for running and using the interactive dashboard implemented in `Chart.py`.
+
+## 1. Prerequisites
+- Python 3.7 or higher installed on your system.
+- Required Python packages: `pandas`, `numpy`, `dash`, `plotly`.
+- The following files should be in the same directory:
+  - `Chart.py`
+  - `OECD.STI.PIE,DSD_PATENTS@DF_PATENTS,1.0+.A...PRIORITY...INVENTOR..._T.csv`
+  - `assets/custom.css` (for custom styling)
+
+## 2. Installation of Required Packages
+Open a terminal in the project directory and run:
+
+```
+pip install pandas numpy dash plotly
+```
+
+## 3. Running the Dashboard
+In the terminal, run:
+
+```
+python Chart.py
+```
+
+- The script will preprocess the CSV data and launch a local Dash server.
+- After a few seconds, a message will appear with a local URL (e.g., `http://127.0.0.1:8050/`).
+- Open this URL in your web browser to access the dashboard.
+
+## 4. Dashboard Features
+- **Country Selection:** Use the dropdown to select a country. The charts will update accordingly.
+- **Year Selection:** Use the checkboxes to select one or both years (2020, 2021). Multiple selections are supported.
+- **Pie Chart:** Shows the percentage of patents by patent office for the selected country and years.
+- **Column Chart:** Shows the number of patents by year and patent office, with bars grouped side-by-side for easy comparison.
+- **Interactivity:** Hover over chart elements for tooltips. Changing selections updates both charts.
+
+## 5. Customization
+- To change the dashboard's appearance, edit `assets/custom.css`.
+- To modify data preprocessing or chart logic, edit `Chart.py`.
+
+## 6. Troubleshooting
+- If you see errors about missing packages, ensure you have installed all required packages.
+- If the dashboard does not appear, check the terminal for error messages.
+- For any issues with the data, ensure the CSV file is present and not corrupted.
+
+## 7. Stopping the Dashboard
+- To stop the dashboard, return to the terminal and press `Ctrl+C`.
+
+---
+
