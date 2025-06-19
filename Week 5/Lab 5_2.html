@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Data Visualization"/>
+    <meta name="keywords" content="HTML, CSS, D3"/>
+    <meta name="author" content="Dai Vy"/>
+    <title>Task 5.2 D3 Transitions</title>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style> 
+
+    </style>
+</head>
+<body>
+
+    <button id="cubic">Transition 1</button>
+    <button id="elastic">Transition 2</button>
+    <button id="update">Update</button>
+    <h1>LAB 5.2 D3 Transitions</h1>
+
+    <script>
+        var w = 500;
+        var h = 100;
+        var maxValue = 25;
+        var dataset = [24, 10, 29, 19, 8, 15, 20, 12, 9, 6, 21, 28];
+
+        // Use scaleBand() to create an ordinal scaleable x-axis based on the range of the data set.
+        var xScale = d3.scaleBand()
+                .domain(d3.range(dataset.length))
+                .rangeRound([0, w])
+                .paddingInner(0.05);
+
+        // Use scaleLinear() to create a linear scaleable y-axis based on the range of the data set.
+        var yScale = d3.scaleLinear()
+                .domain([0, d3.max(dataset)])
+                .range([0, h]);
+
+        var svg = d3.select("body")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
+
+        // Draw initial bars
+        svg.selectAll("rect")   
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("x", function(d, i) {
+                return xScale(i);
+            })
+            .attr("y", function(d) {
+                return h - yScale(d);
+            })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function(d) {
+                return yScale(d);
+            })
+            .attr("fill", "steelblue");
+
+        // Draw initial labels
+        svg.selectAll("text")
+            .data(dataset)
+            .enter()
+            .append("text")
+            .text(function(d) {
+                return d; // This displays the number on each bar
+            })
+            .attr("x", function(d, i) {
+                return xScale(i) + xScale.bandwidth() / 2;
+            })
+            .attr("y", function(d) {
+                return h - yScale(d) + 14;
+            })
+            .attr("text-anchor", "middle")
+            .attr("fill", "white")
+            .attr("font-size", "12px");
+
+        var duration = 2000;
+
+        // General update function for bars and labels with transition options
+        function updateChart(easeFn) {
+            // Generate new random dataset
+            dataset = [];
+            var numBars = Math.floor(Math.random() * 10) + 8; // Random number of bars between 8 and 17
+            for (var i = 0; i < numBars; i++) {
+                dataset.push(Math.floor(Math.random() * maxValue));
+            }
+
+            // Update scales
+            xScale.domain(d3.range(dataset.length));
+            yScale.domain([0, d3.max(dataset)]);
+
+            // Calculate per-bar delay so total time is duration
+            var delayStep = duration / dataset.length;
+
+            // DATA JOIN for bars
+            var bars = svg.selectAll("rect")
+                .data(dataset);
+
+            // EXIT old elements
+            bars.exit()
+                .transition()
+                .duration(duration)
+                .ease(easeFn)
+                .attr("y", h)
+                .attr("height", 0)
+                .remove();
+
+            // UPDATE existing bars
+            bars.transition()
+                .duration(duration)
+                .delay(function(d, i) { return i * delayStep; })
+                .ease(easeFn)
+                .attr("x", function(d, i) { return xScale(i); })
+                .attr("y", function(d) { return h - yScale(d); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return yScale(d); });
+
+            // ENTER new bars
+            bars.enter()
+                .append("rect")
+                .attr("x", function(d, i) { return xScale(i); })
+                .attr("y", h)
+                .attr("width", xScale.bandwidth())
+                .attr("height", 0)
+                .attr("fill", "steelblue")
+                .transition()
+                .duration(duration)
+                .delay(function(d, i) { return i * delayStep; })
+                .ease(easeFn)
+                .attr("y", function(d) { return h - yScale(d); })
+                .attr("height", function(d) { return yScale(d); });
+
+            // DATA JOIN for labels
+            var labels = svg.selectAll("text")
+                .data(dataset);
+
+            // EXIT old labels
+            labels.exit()
+                .transition()
+                .duration(duration)
+                .ease(easeFn)
+                .attr("y", h)
+                .remove();
+
+            // UPDATE existing labels
+            labels.transition()
+                .duration(duration)
+                .delay(function(d, i) { return i * delayStep; })
+                .ease(easeFn)
+                .text(function(d) { return d; })
+                .attr("x", function(d, i) { return xScale(i) + xScale.bandwidth() / 2; })
+                .attr("y", function(d) { return h - yScale(d) + 14; });
+
+            // ENTER new labels
+            labels.enter()
+                .append("text")
+                .text(function(d) { return d; })
+                .attr("x", function(d, i) { return xScale(i) + xScale.bandwidth() / 2; })
+                .attr("y", h)
+                .attr("text-anchor", "middle")
+                .attr("fill", "white")
+                .attr("font-size", "12px")
+                .transition()
+                .duration(duration)
+                .delay(function(d, i) { return i * delayStep; })
+                .ease(easeFn)
+                .attr("y", function(d) { return h - yScale(d) + 14; });
+        }
+
+        // Button event listeners for different transitions
+        d3.select("#cubic")
+            .on("click", function() { updateChart(d3.easeCubicInOut); });
+        d3.select("#elastic")
+            .on("click", function() { updateChart(d3.easeElasticOut); });
+        d3.select("#update")
+            .on("click", function() { updateChart(d3.easeCubicInOut); });
+
+    </script>
+
+    <br>
+
+    <footer style="color: grey">COS30045 Data Visualization<br>
+        Dai Vy
+    </footer>
+</body>
+</html>

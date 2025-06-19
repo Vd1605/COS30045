@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Data Visualization"/>
+    <meta name="keywords" content="HTML, CSS, D3"/>
+    <meta name="author" content="Dai Vy"/>
+    <title>Task 5.3 D3 Adding and Removing Data</title>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style> 
+
+    </style>
+</head>
+<body>
+
+    <button id="add">Add</button>
+    <button id="remove">Remove</button>
+    <h1>LAB 5.3 D3 Adding and Removing Data</h1>
+
+    <script>
+        var w = 500;
+        var h = 100;
+        var maxValue = 25;
+        var dataset = [24, 10, 29, 19, 8, 15, 20, 12, 9, 6, 21, 28];
+        var duration = 2000;
+
+        // Use scaleBand() to create an ordinal scaleable x-axis based on the range of the data set.
+        var xScale = d3.scaleBand()
+                .domain(d3.range(dataset.length))
+                .rangeRound([0, w])
+                .paddingInner(0.05);
+
+        // Use scaleLinear() to create a linear scaleable y-axis based on the range of the data set.
+        var yScale = d3.scaleLinear()
+                .domain([0, d3.max(dataset)])
+                .range([0, h]);
+
+        var svg = d3.select("body")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
+
+        // Draw initial bars
+        svg.selectAll("rect")   
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("x", function(d, i) {
+                return xScale(i);
+            })
+            .attr("y", function(d) {
+                return h - yScale(d);
+            })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function(d) {
+                return yScale(d);
+            })
+            .attr("fill", "steelblue");
+
+        // Draw initial labels
+        svg.selectAll("text")
+            .data(dataset)
+            .enter()
+            .append("text")
+            .text(function(d) {
+                return d; // This displays the number on each bar
+            })
+            .attr("x", function(d, i) {
+                return xScale(i) + xScale.bandwidth() / 2;
+            })
+            .attr("y", function(d) {
+                return h - yScale(d) + 14;
+            })
+            .attr("text-anchor", "middle")
+            .attr("fill", "white")
+            .attr("font-size", "12px");
+
+        // Add bar function
+        function addBar() {
+            var newValue = Math.floor(Math.random() * maxValue);
+            dataset.push(newValue);
+            xScale.domain(d3.range(dataset.length));
+            yScale.domain([0, d3.max(dataset)]);
+            var delayStep = duration / dataset.length;
+
+            // Bars
+            var bars = svg.selectAll("rect")
+                .data(dataset, function(d, i) { return i; });
+
+            // ENTER new bar
+            var barsEnter = bars.enter()
+                .append("rect")
+                .attr("x", w) // start off right edge
+                .attr("y", function(d) { return h - yScale(d); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return yScale(d); })
+                .attr("fill", "steelblue");
+
+            // MERGE and transition all bars
+            bars.merge(barsEnter)
+                .transition()
+                .duration(duration)
+                .delay(function(d, i) { return i * delayStep; })
+                .attr("x", function(d, i) { return xScale(i); })
+                .attr("y", function(d) { return h - yScale(d); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return yScale(d); });
+
+            // Labels
+            var labels = svg.selectAll("text")
+                .data(dataset, function(d, i) { return i; });
+
+            var labelsEnter = labels.enter()
+                .append("text")
+                .text(function(d) { return d; })
+                .attr("x", w + xScale.bandwidth() / 2)
+                .attr("y", function(d) { return h - yScale(d) + 14; })
+                .attr("text-anchor", "middle")
+                .attr("fill", "white")
+                .attr("font-size", "12px");
+
+            labels.merge(labelsEnter)
+                .transition()
+                .duration(duration)
+                .delay(function(d, i) { return i * delayStep; })
+                .text(function(d) { return d; })
+                .attr("x", function(d, i) { return xScale(i) + xScale.bandwidth() / 2; })
+                .attr("y", function(d) { return h - yScale(d) + 14; });
+        }
+
+        // Remove bar function
+        function removeBar() {
+            if (dataset.length === 0) return;
+            dataset.shift();
+            xScale.domain(d3.range(dataset.length));
+            yScale.domain([0, d3.max(dataset)]);
+            var delayStep = duration / (dataset.length || 1);
+
+            // Bars
+            var bars = svg.selectAll("rect")
+                .data(dataset, function(d, i) { return i; });
+
+            // EXIT first bar
+            bars.exit()
+                .transition()
+                .duration(duration)
+                .attr("x", w)
+                .remove();
+
+            // UPDATE remaining bars
+            bars.transition()
+                .duration(duration)
+                .delay(function(d, i) { return i * delayStep; })
+                .attr("x", function(d, i) { return xScale(i); })
+                .attr("y", function(d) { return h - yScale(d); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return yScale(d); });
+
+            // Labels
+            var labels = svg.selectAll("text")
+                .data(dataset, function(d, i) { return i; });
+
+            labels.exit()
+                .transition()
+                .duration(duration)
+                .attr("x", w)
+                .remove();
+
+            labels.transition()
+                .duration(duration)
+                .delay(function(d, i) { return i * delayStep; })
+                .text(function(d) { return d; })
+                .attr("x", function(d, i) { return xScale(i) + xScale.bandwidth() / 2; })
+                .attr("y", function(d) { return h - yScale(d) + 14; });
+        }
+
+        // Button event listeners
+        d3.select("#add").on("click", addBar);
+        d3.select("#remove").on("click", removeBar);
+    </script>
+
+    <br>
+
+    <footer style="color: grey">COS30045 Data Visualization<br>
+        Dai Vy
+    </footer>
+</body>
+</html>
